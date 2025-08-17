@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>2-User P2P Chat (No Backend)</title>
+    <style>
+        :root {
+            --gap: 12px;
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font: 16px system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            background: #0f172a;
+            color: #e2e8f0;
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+        }
+
+        .card {
+            width: min(960px, 95vw);
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 16px;
+            padding: 18px;
+            display: grid;
+            gap: var(--gap);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        h1 {
+            margin: 6px 0 2px;
+            font-size: 20px;
+            letter-spacing: 0.3px;
+        }
+
+        .row {
+            display: grid;
+            gap: var(--gap);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--gap);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 130px;
+            resize: vertical;
+            padding: 10px;
+            border-radius: var(--radius);
+            border: 1px solid #334155;
+            background: #0b1220;
+            color: #e2e8f0;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            line-height: 1.25;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: var(--radius);
+            border: 1px solid #334155;
+            background: #0b1220;
+            color: #e2e8f0;
+        }
+
+        button {
+            border: 1px solid #475569;
+            background: #1f2937;
+            color: #e2e8f0;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: .15s;
+        }
+
+        button:hover {
+            background: #2b3546;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .chat {
+            display: grid;
+            grid-template-rows: 1fr auto;
+            gap: var(--gap);
+            height: 320px;
+            border: 1px solid #334155;
+            border-radius: var(--radius);
+            background: #0b1220;
+            padding: var(--gap);
+        }
+
+        .messages {
+            overflow: auto;
+            display: grid;
+            gap: 6px;
+            align-content: start;
+            padding-right: 2px;
+        }
+
+        .bubble {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            word-wrap: break-word;
+        }
+
+        .me {
+            justify-self: end;
+            background: #2563eb;
+            color: white;
+            border-top-right-radius: 4px;
+        }
+
+        .them {
+            justify-self: start;
+            background: #374151;
+            border-top-left-radius: 4px;
+        }
+
+        .status {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .small {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>2-User P2P Chat (no backend)</h1>
+        <div class="small">
+            Step 1: One person clicks <b>Create Offer</b> and sends the offer text to the other person (copy-paste or
+            QR/DM).<br>
+            Step 2: The other person pastes the offer, clicks <b>Create Answer</b>, and sends the answer back.<br>
+            Step 3: The first person pastes the answer and clicks <b>Finalize</b>. When status says “Connected”, start
+            chatting!
+        </div>
+
+        <div class="grid-2">
+            <div class="row">
+                <div class="status" id="status">Status: idle</div>
+                <div class="row">
+                    <button id="btnCreateOffer">Create Offer</button>
+                    <textarea id="localOffer" placeholder="Your OFFER (share this with your peer)" readonly></textarea>
+                </div>
+                <div class="row">
+                    <textarea id="remoteAnswer" placeholder="Paste the ANSWER you received"></textarea>
+                    <button id="btnFinalize" disabled>Finalize</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="status">&nbsp;</div>
+                <div class="row">
+                    <textarea id="remoteOffer" placeholder="Paste the OFFER you received"></textarea>
+                    <button id="btnCreateAnswer">Create Answer</button>
+                </div>
+                <div class="row">
+                    <textarea id="localAnswer" placeholder="Your ANSWER (send this back)" readonly></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat">
+            <div id="messages" class="messages"></div>
+            <div class="grid-2" style="grid-template-columns: 1fr auto;">
+                <input id="input" type="text" placeholder="Type a message..." disabled />
+                <button id="send" disabled>Send</button>
+            </div>
+        </div>
+
+        <div class="small mono">
+            Tip: This uses WebRTC with only public STUN (no servers you run). If both peers are behind strict/symmetric
+            NAT and can’t connect, it may fail without a TURN server.
+        </div>
+    </div>
+
+    <script>
+        (() => {
+            // Use public STUN. (No TURN here to keep it “no backend you run”.)
+            const pc = new RTCPeerConnection({
+                iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+            });
+
+            let dc; // DataChannel
+            let isOfferer = false;
+            let connected = false;
+
+            const $ = id => document.getElementById(id);
+            const statusEl = $("status");
+            const btnCreateOffer = $("btnCreateOffer");
+            const btnCreateAnswer = $("btnCreateAnswer");
+            const btnFinalize = $("btnFinalize");
+            const localOffer = $("localOffer");
+            const remoteOffer = $("remoteOffer");
+            const localAnswer = $("localAnswer");
+            const remoteAnswer = $("remoteAnswer");
+            const input = $("input");
+            const sendBtn = $("send");
+            const messages = $("messages");
+
+            function setStatus(text) { statusEl.textContent = "Status: " + text; }
+            function addMsg(text, mine) {
+                const div = document.createElement("div");
+                div.className = "bubble " + (mine ? "me" : "them");
+                div.textContent = text;
+                messages.appendChild(div);
+                messages.scrollTop = messages.scrollHeight;
+            }
+
+            // ICE gathering: show final SDP only when done (so it includes ICE candidates)
+            function waitForIceGatheringComplete(pc) {
+                return new Promise(resolve => {
+                    if (pc.iceGatheringState === "complete") return resolve();
+                    function check() {
+                        if (pc.iceGatheringState === "complete") {
+                            pc.removeEventListener("icegatheringstatechange", check);
+                            resolve();
+                        }
+                    }
+                    pc.addEventListener("icegatheringstatechange", check);
+                });
+            }
+
+            // Outgoing data channel (offerer creates it)
+            function setupDataChannel(channel) {
+                dc = channel;
+                dc.onopen = () => {
+                    connected = true;
+                    setStatus("Connected");
+                    input.disabled = false;
+                    sendBtn.disabled = false;
+                    btnCreateOffer.disabled = true;
+                    btnCreateAnswer.disabled = true;
+                    btnFinalize.disabled = true;
+                    remoteOffer.disabled = true;
+                    remoteAnswer.disabled = true;
+                };
+                dc.onclose = () => setStatus("Disconnected");
+                dc.onmessage = (ev) => addMsg(ev.data, false);
+            }
+
+            // The answerer will receive datachannel
+            pc.ondatachannel = (ev) => setupDataChannel(ev.channel);
+
+            // Helpful connection state logs
+            pc.onconnectionstatechange = () => {
+                setStatus(pc.connectionState);
+            };
+
+            // BUTTON: Create Offer (Person A)
+            btnCreateOffer.onclick = async () => {
+                if (connected) return;
+                isOfferer = true;
+                setStatus("Creating offer…");
+                const channel = pc.createDataChannel("chat", { ordered: true });
+                setupDataChannel(channel);
+
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+                await waitForIceGatheringComplete(pc);
+                localOffer.value = JSON.stringify(pc.localDescription);
+                localOffer.readOnly = false; // allow select/copy
+                localOffer.select();
+                setStatus("Offer ready — share it");
+                btnFinalize.disabled = false;
+                btnCreateOffer.disabled = true;
+            };
+
+            // BUTTON: Create Answer (Person B)
+            btnCreateAnswer.onclick = async () => {
+                if (connected) return;
+                const offerText = remoteOffer.value.trim();
+                if (!offerText) {
+                    alert("Paste the OFFER first.");
+                    return;
+                }
+                try {
+                    setStatus("Creating answer…");
+                    const offer = JSON.parse(offerText);
+                    await pc.setRemoteDescription(offer);
+
+                    const answer = await pc.createAnswer();
+                    await pc.setLocalDescription(answer);
+                    await waitForIceGatheringComplete(pc);
+                    localAnswer.value = JSON.stringify(pc.localDescription);
+                    localAnswer.readOnly = false;
+                    localAnswer.select();
+                    setStatus("Answer ready — send it back");
+                    btnCreateAnswer.disabled = true;
+                    remoteOffer.disabled = true;
+                } catch (e) {
+                    console.error(e);
+                    alert("Invalid OFFER JSON.");
+                }
+            };
+
+            // BUTTON: Finalize (Person A pastes answer)
+            btnFinalize.onclick = async () => {
+                const answerText = remoteAnswer.value.trim();
+                if (!answerText) {
+                    alert("Paste the ANSWER first.");
+                    return;
+                }
+                try {
+                    setStatus("Finalizing…");
+                    const answer = JSON.parse(answerText);
+                    await pc.setRemoteDescription(answer);
+                    btnFinalize.disabled = true;
+                    remoteAnswer.disabled = true;
+                    // Once remote description is set, ICE will continue; onopen will flip status.
+                } catch (e) {
+                    console.error(e);
+                    alert("Invalid ANSWER JSON.");
+                }
+            };
+
+            // Chat send
+            function send() {
+                const text = input.value.trim();
+                if (!text || !dc || dc.readyState !== "open") return;
+                dc.send(text);
+                addMsg(text, true);
+                input.value = "";
+            }
+            sendBtn.onclick = send;
+            input.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    send();
+                }
+            });
+        })();
+    </script>
+</body>
+
+</html>
