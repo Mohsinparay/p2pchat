@@ -15,6 +15,7 @@
             --accent: #ec4899;
             --success: #10b981;
             --warning: #f59e0b;
+            --danger: #ef4444;
             --background: #0f0f23;
             --surface: #111827;
             --surface-light: #1e293b;
@@ -274,6 +275,16 @@
         .accent-btn {
             background: linear-gradient(135deg, var(--accent), #db2777);
             border-color: var(--accent);
+        }
+
+        .danger-btn {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            border-color: var(--danger);
+        }
+
+        .success-btn {
+            background: linear-gradient(135deg, var(--success), #059669);
+            border-color: var(--success);
         }
 
         .chat {
@@ -879,97 +890,203 @@
             border-color: var(--warning);
         }
 
-        .reaction-picker {
-            display: none;
-            position: absolute;
-            bottom: 100%;
-            left: 0;
-            background: var(--surface);
-            border: 1px solid var(--surface-light);
-            border-radius: 20px;
-            padding: 8px;
-            gap: 5px;
-            z-index: 100;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .reaction-option {
-            font-size: 18px;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 50%;
-            transition: all 0.2s;
-        }
-
-        .reaction-option:hover {
-            background: var(--surface-light);
-            transform: scale(1.2);
-        }
-
-        .message-reactions {
-            display: flex;
-            gap: 4px;
-            margin-top: 4px;
-            flex-wrap: wrap;
-        }
-
-        .reaction {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 2px 6px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 2px;
-        }
-
-        .reaction-count {
-            font-size: 10px;
-            opacity: 0.8;
-        }
-
-        .theme-selector {
-            background: rgba(11, 18, 32, 0.7);
-            border: 1px solid rgba(126, 34, 206, 0.3);
-            border-radius: 8px;
-            padding: 6px 10px;
-            color: var(--text);
-            font-size: 12px;
-        }
-
-        .voice-message {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            margin-top: 4px;
-        }
-
-        .voice-wave {
-            flex: 1;
-            height: 20px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border-radius: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .voice-wave::before {
-            content: '';
-            position: absolute;
+        /* Call Interface Styles */
+        .call-interface {
+            position: fixed;
             top: 0;
-            left: -100%;
+            left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            animation: voiceWave 1.5s infinite linear;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
         }
 
-        @keyframes voiceWave {
-            0% { left: -100%; }
-            100% { left: 100%; }
+        .call-interface.active {
+            display: flex;
+        }
+
+        .video-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+            height: 70vh;
+            margin-bottom: 20px;
+        }
+
+        .video-wrapper {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            background: var(--surface);
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 30px rgba(126, 34, 206, 0.5);
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .call-controls {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .call-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .call-accept {
+            background: var(--success);
+            color: white;
+        }
+
+        .call-reject {
+            background: var(--danger);
+            color: white;
+        }
+
+        .call-end {
+            background: var(--danger);
+            color: white;
+        }
+
+        .call-mute {
+            background: var(--warning);
+            color: white;
+        }
+
+        .call-video {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .call-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        .call-timer {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+
+        .call-status {
+            color: var(--text);
+            font-size: 18px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .incoming-call {
+            text-align: center;
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            background: rgba(17, 24, 39, 0.95);
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 50px rgba(126, 34, 206, 0.7);
+        }
+
+        .caller-info {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .voice-call .video-container {
+            display: none;
+        }
+
+        .voice-call-interface {
+            text-align: center;
+            color: white;
+            padding: 40px;
+        }
+
+        .voice-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 30px;
+            border: 4px solid var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .minimized-call {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 200px;
+            height: 150px;
+            background: var(--surface);
+            border-radius: 10px;
+            border: 2px solid var(--primary);
+            overflow: hidden;
+            z-index: 999;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .minimized-call video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .minimize-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -977,6 +1094,43 @@
 <body>
     <div class="quantum-bg"></div>
     <div class="quantum-field"></div>
+    
+    <!-- Call Interface -->
+    <div class="call-interface" id="callInterface">
+        <div class="call-timer" id="callTimer">00:00</div>
+        <div class="call-status" id="callStatus">Calling...</div>
+        
+        <div class="video-container" id="videoContainer">
+            <div class="video-wrapper">
+                <video id="localVideo" autoplay muted></video>
+                <div class="video-label">You</div>
+            </div>
+            <div class="video-wrapper">
+                <video id="remoteVideo" autoplay></video>
+                <div class="video-label">Peer</div>
+            </div>
+        </div>
+
+        <div class="voice-call-interface" id="voiceCallInterface" style="display: none;">
+            <div class="voice-avatar">👤</div>
+            <div class="caller-info" id="voiceCallerInfo">Voice Call</div>
+        </div>
+
+        <div class="incoming-call" id="incomingCall" style="display: none;">
+            <div class="caller-info" id="incomingCaller">Incoming Call</div>
+            <div class="call-status">Would you like to answer?</div>
+            <div class="call-controls">
+                <button class="call-btn call-accept" onclick="acceptCall()">📞</button>
+                <button class="call-btn call-reject" onclick="rejectCall()">📵</button>
+            </div>
+        </div>
+
+        <div class="call-controls" id="activeCallControls" style="display: none;">
+            <button class="call-btn call-mute" id="muteBtn" onclick="toggleMute()">🎤</button>
+            <button class="call-btn call-video" id="videoBtn" onclick="toggleVideo()">📹</button>
+            <button class="call-btn call-end" onclick="endCall()">📞</button>
+        </div>
+    </div>
     
     <div class="card quantum-pulse">
         <h1>QUANTUM ENTANGLED CHAT</h1>
@@ -1042,13 +1196,14 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <div class="control-label">APPEARANCE</div>
-                    <select class="theme-selector" id="themeSelector">
-                        <option value="quantum">Quantum Theme</option>
-                        <option value="dark">Dark Mode</option>
-                        <option value="light">Light Mode</option>
-                        <option value="purple">Purple Haze</option>
-                    </select>
+                    <div class="control-label">CALL SETTINGS</div>
+                    <div class="quantum-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoAnswer" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span>Auto Answer Calls</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1068,9 +1223,9 @@
                 </div>
                 <div class="chat-actions">
                     <button class="chat-action reconnect-btn" title="Reconnect" id="reconnectBtn" style="display: none;">↻</button>
-                    <div class="chat-action" title="Voice Message" id="voiceBtn">🎤</div>
+                    <div class="chat-action" title="Voice Call" id="voiceCallBtn">📞</div>
+                    <div class="chat-action" title="Video Call" id="videoCallBtn">📹</div>
                     <div class="chat-action" title="Clear Chat" id="clearChat">🗑️</div>
-                    <div class="chat-action" title="Export Chat" id="exportChat">📤</div>
                 </div>
             </div>
             
@@ -1091,16 +1246,6 @@
                 </div>
                 <input id="input" type="text" placeholder="Transmit through quantum tunnel..." disabled />
                 <button id="send" disabled>Transmit</button>
-                <div class="attachment-btn" title="Add Reaction" id="reactionBtn">❤️
-                    <div class="reaction-picker" id="reactionPicker">
-                        <div class="reaction-option" data-reaction="❤️">❤️</div>
-                        <div class="reaction-option" data-reaction="😂">😂</div>
-                        <div class="reaction-option" data-reaction="😮">😮</div>
-                        <div class="reaction-option" data-reaction="😢">😢</div>
-                        <div class="reaction-option" data-reaction="👏">👏</div>
-                        <div class="reaction-option" data-reaction="🎉">🎉</div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -1126,7 +1271,6 @@
             let typingTimer;
             let lastSentTyping = 0;
             let superpositionMode = false;
-            let snapMode = false;
             let messageIdCounter = 0;
             let peerOnline = false;
             let lastPeerActivity = 0;
@@ -1136,8 +1280,16 @@
             let peerViewing = false;
             let lastViewingUpdate = 0;
             let myViewingStatus = false;
-            let voiceRecorder = null;
-            let audioChunks = [];
+
+            // Call variables
+            let localStream = null;
+            let remoteStream = null;
+            let isInCall = false;
+            let isVideoCall = false;
+            let callStartTime = 0;
+            let callTimerInterval = null;
+            let isMuted = false;
+            let isVideoOff = false;
 
             const $ = id => document.getElementById(id);
             const statusEl = $("status");
@@ -1159,17 +1311,29 @@
             const peerStatusText = $("peerStatusText");
             const peerActivity = $("peerActivity");
             const clearChatBtn = $("clearChat");
-            const exportChatBtn = $("exportChat");
+            const voiceCallBtn = $("voiceCallBtn");
+            const videoCallBtn = $("videoCallBtn");
             const attachBtn = $("attachBtn");
             const fileInput = $("fileInput");
-            const themeSelector = $("themeSelector");
-            const typingEmoji = $("typingEmoji");
-            const viewingEmoji = $("viewingEmoji");
             const connectionSection = $("connectionSection");
             const reconnectBtn = $("reconnectBtn");
-            const voiceBtn = $("voiceBtn");
-            const reactionBtn = $("reactionBtn");
-            const reactionPicker = $("reactionPicker");
+            const typingEmoji = $("typingEmoji");
+            const viewingEmoji = $("viewingEmoji");
+
+            // Call elements
+            const callInterface = $("callInterface");
+            const callTimer = $("callTimer");
+            const callStatus = $("callStatus");
+            const videoContainer = $("videoContainer");
+            const localVideo = $("localVideo");
+            const remoteVideo = $("remoteVideo");
+            const voiceCallInterface = $("voiceCallInterface");
+            const incomingCall = $("incomingCall");
+            const incomingCaller = $("incomingCaller");
+            const activeCallControls = $("activeCallControls");
+            const muteBtn = $("muteBtn");
+            const videoBtn = $("videoBtn");
+            const autoAnswer = $("autoAnswer");
 
             // Track visibility state for presence
             let lastVisibilityChange = Date.now();
@@ -1177,10 +1341,8 @@
             document.addEventListener('visibilitychange', () => {
                 if (connected) {
                     const now = Date.now();
-                    // Update viewing status immediately
                     updateMyViewingStatus();
                     
-                    // Send presence update with debouncing
                     if (now - lastPresenceUpdate > 2000) {
                         sendPresenceUpdate();
                         lastPresenceUpdate = now;
@@ -1204,20 +1366,17 @@
                 if (connected && peerOnline) {
                     const timeSinceLastActivity = Date.now() - lastPeerActivity;
                     
-                    // More accurate offline detection
-                    if (timeSinceLastActivity > 7000) { // 7 seconds threshold
+                    if (timeSinceLastActivity > 7000) {
                         updatePeerStatus(false);
                     }
                     
-                    // Check viewing status timeout
                     const timeSinceViewing = Date.now() - lastViewingUpdate;
-                    if (timeSinceViewing > 5000 && peerViewing) { // 5 seconds for viewing
+                    if (timeSinceViewing > 5000 && peerViewing) {
                         updatePeerViewing(false);
                     }
                 }
             }, 1000);
 
-            // Update viewing status based on focus and visibility
             function updateMyViewingStatus() {
                 const newViewingStatus = document.visibilityState === 'visible' && document.hasFocus();
                 if (newViewingStatus !== myViewingStatus) {
@@ -1232,7 +1391,6 @@
             }
 
             function updatePeerStatus(online, timestamp = Date.now()) {
-                // Prevent rapid state changes
                 if (peerOnline === online && Date.now() - lastPeerActivity < 3000) return;
                 
                 peerOnline = online;
@@ -1249,9 +1407,9 @@
                     
                     if (lastPeerActivity > 0) {
                         const timeDiff = Date.now() - lastPeerActivity;
-                        if (timeDiff < 10000) { // 10 seconds
+                        if (timeDiff < 10000) {
                             peerActivity.textContent = `Last seen: Just now`;
-                        } else if (timeDiff < 60000) { // 1 minute
+                        } else if (timeDiff < 60000) {
                             const seconds = Math.floor(timeDiff / 1000);
                             peerActivity.textContent = `Last seen: ${seconds}s ago`;
                         } else {
@@ -1306,7 +1464,265 @@
                 if (state === "completed") stepEl.classList.add("completed");
             }
 
-            function addMsg(text, mine, messageId = null, status = 'sent', ephemeral = 0, fileData = null, voiceData = null, reactions = []) {
+            // Call Functions
+            async function startVoiceCall() {
+                if (!connected) {
+                    alert("Please establish connection first.");
+                    return;
+                }
+
+                if (isInCall) {
+                    alert("You are already in a call.");
+                    return;
+                }
+
+                try {
+                    callStatus.textContent = "Starting voice call...";
+                    callInterface.classList.add('active');
+                    voiceCallInterface.style.display = 'block';
+                    videoContainer.style.display = 'none';
+                    incomingCall.style.display = 'none';
+                    activeCallControls.style.display = 'flex';
+
+                    isVideoCall = false;
+                    await initializeMedia(true, false);
+                    sendCallRequest('voice');
+                } catch (error) {
+                    console.error("Error starting voice call:", error);
+                    alert("Could not start voice call. Please check your microphone permissions.");
+                    endCall();
+                }
+            }
+
+            async function startVideoCall() {
+                if (!connected) {
+                    alert("Please establish connection first.");
+                    return;
+                }
+
+                if (isInCall) {
+                    alert("You are already in a call.");
+                    return;
+                }
+
+                try {
+                    callStatus.textContent = "Starting video call...";
+                    callInterface.classList.add('active');
+                    voiceCallInterface.style.display = 'none';
+                    videoContainer.style.display = 'grid';
+                    incomingCall.style.display = 'none';
+                    activeCallControls.style.display = 'flex';
+
+                    isVideoCall = true;
+                    await initializeMedia(true, true);
+                    sendCallRequest('video');
+                } catch (error) {
+                    console.error("Error starting video call:", error);
+                    alert("Could not start video call. Please check your camera and microphone permissions.");
+                    endCall();
+                }
+            }
+
+            async function initializeMedia(audio, video) {
+                try {
+                    localStream = await navigator.mediaDevices.getUserMedia({
+                        audio: audio,
+                        video: video
+                    });
+
+                    if (video && localVideo) {
+                        localVideo.srcObject = localStream;
+                    }
+
+                    // Add tracks to peer connection
+                    localStream.getTracks().forEach(track => {
+                        pc.addTrack(track, localStream);
+                    });
+
+                    return true;
+                } catch (error) {
+                    console.error("Error accessing media devices:", error);
+                    throw error;
+                }
+            }
+
+            function sendCallRequest(type) {
+                if (!dc || dc.readyState !== 'open') return;
+
+                dc.send(JSON.stringify({
+                    type: 'call_request',
+                    callType: type,
+                    timestamp: Date.now()
+                }));
+
+                callStatus.textContent = `Calling peer...`;
+                startCallTimer();
+            }
+
+            function handleIncomingCall(data) {
+                if (isInCall) {
+                    // Already in a call, send busy signal
+                    sendCallResponse('busy');
+                    return;
+                }
+
+                incomingCaller.textContent = `Incoming ${data.callType} call`;
+                callInterface.classList.add('active');
+                voiceCallInterface.style.display = data.callType === 'voice' ? 'block' : 'none';
+                videoContainer.style.display = data.callType === 'video' ? 'grid' : 'none';
+                incomingCall.style.display = 'block';
+                activeCallControls.style.display = 'none';
+
+                isVideoCall = data.callType === 'video';
+
+                // Store call data for later use
+                window.pendingCallData = data;
+
+                // Auto-answer if enabled
+                if (autoAnswer.checked) {
+                    setTimeout(() => acceptCall(), 1000);
+                }
+            }
+
+            async function acceptCall() {
+                try {
+                    callStatus.textContent = "Connecting...";
+                    incomingCall.style.display = 'none';
+                    activeCallControls.style.display = 'flex';
+
+                    await initializeMedia(true, isVideoCall);
+                    
+                    // Create and send answer
+                    const offer = window.pendingCallData.offer;
+                    if (offer) {
+                        await pc.setRemoteDescription(new RTCSessionDescription(offer));
+                        const answer = await pc.createAnswer();
+                        await pc.setLocalDescription(answer);
+                        
+                        sendCallResponse('accepted', answer);
+                    }
+
+                    startCallTimer();
+                    isInCall = true;
+                } catch (error) {
+                    console.error("Error accepting call:", error);
+                    alert("Error accepting call. Please try again.");
+                    endCall();
+                }
+            }
+
+            function rejectCall() {
+                sendCallResponse('rejected');
+                endCall();
+            }
+
+            function sendCallResponse(response, answer = null) {
+                if (!dc || dc.readyState !== 'open') return;
+
+                dc.send(JSON.stringify({
+                    type: 'call_response',
+                    response: response,
+                    answer: answer,
+                    timestamp: Date.now()
+                }));
+            }
+
+            function endCall() {
+                // Stop all media tracks
+                if (localStream) {
+                    localStream.getTracks().forEach(track => track.stop());
+                    localStream = null;
+                }
+
+                if (remoteStream) {
+                    remoteStream.getTracks().forEach(track => track.stop());
+                    remoteStream = null;
+                }
+
+                // Clear video elements
+                if (localVideo) localVideo.srcObject = null;
+                if (remoteVideo) remoteVideo.srcObject = null;
+
+                // Reset call state
+                isInCall = false;
+                isVideoCall = false;
+                callInterface.classList.remove('active');
+
+                // Stop timer
+                if (callTimerInterval) {
+                    clearInterval(callTimerInterval);
+                    callTimerInterval = null;
+                }
+
+                // Remove all transceivers
+                pc.getTransceivers().forEach(transceiver => {
+                    transceiver.stop();
+                });
+
+                // Send call end if we were in a call
+                if (dc && dc.readyState === 'open') {
+                    dc.send(JSON.stringify({
+                        type: 'call_end',
+                        timestamp: Date.now()
+                    }));
+                }
+            }
+
+            function toggleMute() {
+                if (!localStream) return;
+
+                const audioTracks = localStream.getAudioTracks();
+                audioTracks.forEach(track => {
+                    track.enabled = !track.enabled;
+                });
+
+                isMuted = !isMuted;
+                muteBtn.textContent = isMuted ? '🎤❌' : '🎤';
+                muteBtn.style.background = isMuted ? 'var(--danger)' : 'var(--warning)';
+            }
+
+            function toggleVideo() {
+                if (!localStream || !isVideoCall) return;
+
+                const videoTracks = localStream.getVideoTracks();
+                videoTracks.forEach(track => {
+                    track.enabled = !track.enabled;
+                });
+
+                isVideoOff = !isVideoOff;
+                videoBtn.textContent = isVideoOff ? '📹❌' : '📹';
+                videoBtn.style.background = isVideoOff ? 'var(--danger)' : 'var(--secondary)';
+            }
+
+            function startCallTimer() {
+                callStartTime = Date.now();
+                callTimerInterval = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - callStartTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    callTimer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            }
+
+            // WebRTC event handlers for calls
+            pc.ontrack = (event) => {
+                remoteStream = event.streams[0];
+                if (remoteVideo) {
+                    remoteVideo.srcObject = remoteStream;
+                }
+            };
+
+            pc.oniceconnectionstatechange = () => {
+                if (pc.iceConnectionState === 'disconnected' || pc.iceConnectionState === 'failed') {
+                    if (isInCall) {
+                        callStatus.textContent = "Call disconnected";
+                        setTimeout(() => endCall(), 2000);
+                    }
+                }
+            };
+
+            // Add message functions and other existing code...
+            function addMsg(text, mine, messageId = null, status = 'sent', ephemeral = 0, fileData = null) {
                 if (!messageId) messageId = generateMessageId();
                 
                 const div = document.createElement("div");
@@ -1359,59 +1775,17 @@
                     fileMessage.appendChild(downloadBtn);
                     
                     messageContent.appendChild(fileMessage);
-                } else if (voiceData) {
-                    const voiceMessage = document.createElement("div");
-                    voiceMessage.className = "voice-message";
-                    
-                    const playBtn = document.createElement("div");
-                    playBtn.className = "file-icon";
-                    playBtn.textContent = "🔊";
-                    playBtn.style.cursor = 'pointer';
-                    playBtn.onclick = () => playVoiceMessage(voiceData);
-                    
-                    const voiceWave = document.createElement("div");
-                    voiceWave.className = "voice-wave";
-                    
-                    const duration = document.createElement("div");
-                    duration.className = "file-size";
-                    duration.textContent = voiceData.duration + "s";
-                    
-                    voiceMessage.appendChild(playBtn);
-                    voiceMessage.appendChild(voiceWave);
-                    voiceMessage.appendChild(duration);
-                    
-                    messageContent.appendChild(voiceMessage);
                 } else {
                     messageContent.textContent = text;
                 }
                 
                 div.appendChild(messageContent);
                 
-                // Add reactions if any
-                if (reactions.length > 0) {
-                    const reactionsContainer = document.createElement("div");
-                    reactionsContainer.className = "message-reactions";
-                    
-                    reactions.forEach(reaction => {
-                        const reactionEl = document.createElement("div");
-                        reactionEl.className = "reaction";
-                        reactionEl.innerHTML = `
-                            ${reaction.emoji}
-                            <span class="reaction-count">${reaction.count}</span>
-                        `;
-                        reactionEl.onclick = () => addReaction(messageId, reaction.emoji);
-                        reactionsContainer.appendChild(reactionEl);
-                    });
-                    
-                    div.appendChild(reactionsContainer);
-                }
-                
                 const time = document.createElement("div");
                 time.className = "message-time";
                 time.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                 div.appendChild(time);
                 
-                // Add message status for user's messages
                 if (mine) {
                     const statusDiv = document.createElement("div");
                     statusDiv.className = "message-status";
@@ -1437,20 +1811,8 @@
                     }
                 }
                 
-                // Add message actions
                 const actions = document.createElement("div");
                 actions.className = "message-actions";
-                
-                const reactBtn = document.createElement("div");
-                reactBtn.className = "message-action";
-                reactBtn.innerHTML = "❤️";
-                reactBtn.title = "Add reaction";
-                reactBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    showReactionPicker(messageId, reactBtn);
-                };
-                
-                actions.appendChild(reactBtn);
                 
                 if (mine) {
                     const deleteBtn = document.createElement("div");
@@ -1472,48 +1834,6 @@
                 createParticles(div);
                 
                 return messageId;
-            }
-
-            function showReactionPicker(messageId, button) {
-                const rect = button.getBoundingClientRect();
-                reactionPicker.style.display = 'flex';
-                reactionPicker.style.left = rect.left + 'px';
-                reactionPicker.style.bottom = (window.innerHeight - rect.top) + 'px';
-                
-                // Set click handler for reactions
-                reactionPicker.onclick = (e) => {
-                    const reaction = e.target.dataset.reaction;
-                    if (reaction) {
-                        addReaction(messageId, reaction);
-                        reactionPicker.style.display = 'none';
-                    }
-                };
-                
-                // Hide on outside click
-                setTimeout(() => {
-                    document.addEventListener('click', function hidePicker() {
-                        reactionPicker.style.display = 'none';
-                        document.removeEventListener('click', hidePicker);
-                    });
-                }, 100);
-            }
-
-            function addReaction(messageId, emoji) {
-                if (!dc || dc.readyState !== 'open') return;
-                
-                dc.send(JSON.stringify({
-                    type: 'reaction',
-                    messageId: messageId,
-                    emoji: emoji,
-                    timestamp: Date.now()
-                }));
-            }
-
-            function playVoiceMessage(voiceData) {
-                const audioBlob = new Blob([voiceData.data], { type: 'audio/wav' });
-                const audioUrl = URL.createObjectURL(audioBlob);
-                const audio = new Audio(audioUrl);
-                audio.play();
             }
 
             function getFileIcon(fileType) {
@@ -1678,8 +1998,13 @@
                     addMsg(data.content, false, data.messageId);
                 } else if (data.type === 'file') {
                     handleFileData(data);
-                } else if (data.type === 'voice') {
-                    handleVoiceData(data);
+                } else if (data.type === 'call_request') {
+                    handleIncomingCall(data);
+                } else if (data.type === 'call_response') {
+                    handleCallResponse(data);
+                } else if (data.type === 'call_end') {
+                    callStatus.textContent = "Call ended";
+                    setTimeout(() => endCall(), 2000);
                 } else if (data.type === 'typing') {
                     updatePeerTyping(data.typing);
                 } else if (data.type === 'viewing') {
@@ -1698,31 +2023,23 @@
                 } else if (data.type === 'read_receipt') {
                     updateMessageStatus(data.messageId, 'read');
                     unreadMessages.delete(data.messageId);
-                } else if (data.type === 'reaction') {
-                    handleReaction(data);
                 }
             }
 
-            function handleReaction(data) {
-                const messageEl = document.querySelector(`[data-message-id="${data.messageId}"]`);
-                if (messageEl) {
-                    let reactionsContainer = messageEl.querySelector('.message-reactions');
-                    if (!reactionsContainer) {
-                        reactionsContainer = document.createElement('div');
-                        reactionsContainer.className = 'message-reactions';
-                        messageEl.appendChild(reactionsContainer);
-                    }
+            function handleCallResponse(data) {
+                if (data.response === 'accepted') {
+                    callStatus.textContent = "Call connected";
+                    isInCall = true;
                     
-                    // Add or update reaction
-                    // This is a simplified implementation - in production you'd want proper reaction counting
-                    const reactionEl = document.createElement("div");
-                    reactionEl.className = "reaction";
-                    reactionEl.innerHTML = `
-                        ${data.emoji}
-                        <span class="reaction-count">1</span>
-                    `;
-                    reactionEl.onclick = () => addReaction(data.messageId, data.emoji);
-                    reactionsContainer.appendChild(reactionEl);
+                    if (data.answer) {
+                        pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+                    }
+                } else if (data.response === 'rejected') {
+                    callStatus.textContent = "Call rejected";
+                    setTimeout(() => endCall(), 2000);
+                } else if (data.response === 'busy') {
+                    callStatus.textContent = "Peer is busy";
+                    setTimeout(() => endCall(), 2000);
                 }
             }
 
@@ -1745,26 +2062,6 @@
                     sendReadReceipt(fileData.messageId);
                 } catch (e) {
                     console.error("Error processing file:", e);
-                }
-            }
-
-            function handleVoiceData(voiceData) {
-                try {
-                    const binaryString = atob(voiceData.data);
-                    const bytes = new Uint8Array(binaryString.length);
-                    for (let i = 0; i < binaryString.length; i++) {
-                        bytes[i] = binaryString.charCodeAt(i);
-                    }
-                    
-                    const voiceObj = {
-                        duration: voiceData.duration,
-                        data: bytes.buffer
-                    };
-                    
-                    addMsg("", false, voiceData.messageId, 'sent', 0, null, voiceObj);
-                    sendReadReceipt(voiceData.messageId);
-                } catch (e) {
-                    console.error("Error processing voice:", e);
                 }
             }
 
@@ -1912,82 +2209,9 @@
                 location.reload();
             };
 
-            // Voice message functionality
-            voiceBtn.onclick = async () => {
-                if (!connected) {
-                    alert("Please establish connection first.");
-                    return;
-                }
-
-                try {
-                    if (!voiceRecorder) {
-                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                        voiceRecorder = new MediaRecorder(stream);
-                        audioChunks = [];
-
-                        voiceRecorder.ondataavailable = (event) => {
-                            audioChunks.push(event.data);
-                        };
-
-                        voiceRecorder.onstop = () => {
-                            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                            sendVoiceMessage(audioBlob);
-                        };
-                    }
-
-                    if (voiceRecorder.state === 'recording') {
-                        voiceRecorder.stop();
-                        voiceBtn.style.background = 'rgba(30, 41, 59, 0.7)';
-                    } else {
-                        audioChunks = [];
-                        voiceRecorder.start();
-                        voiceBtn.style.background = 'var(--accent)';
-                    }
-                } catch (error) {
-                    console.error("Error accessing microphone:", error);
-                    alert("Could not access microphone. Please check permissions.");
-                }
-            };
-
-            function sendVoiceMessage(audioBlob) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const arrayBuffer = e.target.result;
-                    
-                    const binary = new Uint8Array(arrayBuffer);
-                    let base64 = '';
-                    for (let i = 0; i < binary.length; i++) {
-                        base64 += String.fromCharCode(binary[i]);
-                    }
-                    const base64Data = btoa(base64);
-                    
-                    const messageId = generateMessageId();
-                    const voiceMessage = {
-                        type: 'voice',
-                        duration: Math.round(audioBlob.size / 16000), // Rough estimation
-                        data: base64Data,
-                        messageId: messageId,
-                        timestamp: Date.now()
-                    };
-                    
-                    try {
-                        dc.send(JSON.stringify(voiceMessage));
-                        
-                        addMsg("", true, messageId, 'sent', 0, null, {
-                            duration: voiceMessage.duration,
-                            data: arrayBuffer
-                        });
-                        
-                        setTimeout(() => {
-                            updateMessageStatus(messageId, 'delivered');
-                        }, 300);
-                    } catch (error) {
-                        console.error("Error sending voice message:", error);
-                        alert("Error sending voice message.");
-                    }
-                };
-                reader.readAsArrayBuffer(audioBlob);
-            }
+            // Call buttons
+            voiceCallBtn.onclick = startVoiceCall;
+            videoCallBtn.onclick = startVideoCall;
 
             // File sharing
             attachBtn.onclick = () => fileInput.click();
@@ -2130,11 +2354,6 @@
                 }
             });
             
-            // Theme selector
-            themeSelector.addEventListener('change', (e) => {
-                document.body.setAttribute('data-theme', e.target.value);
-            });
-            
             // Chat actions
             clearChatBtn.onclick = () => {
                 if (confirm("Clear all messages?")) {
@@ -2142,25 +2361,13 @@
                     unreadMessages.clear();
                 }
             };
-            
-            exportChatBtn.onclick = () => {
-                const chatText = Array.from(messages.children)
-                    .map(msg => {
-                        const isMe = msg.classList.contains('me');
-                        const content = msg.querySelector('div:first-child').textContent;
-                        const time = msg.querySelector('.message-time').textContent;
-                        return `${isMe ? 'You' : 'Peer'} (${time}): ${content}`;
-                    })
-                    .join('\n');
-                
-                const blob = new Blob([chatText], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'quantum-chat-export.txt';
-                a.click();
-                URL.revokeObjectURL(url);
-            };
+
+            // Make functions globally available for call interface
+            window.acceptCall = acceptCall;
+            window.rejectCall = rejectCall;
+            window.endCall = endCall;
+            window.toggleMute = toggleMute;
+            window.toggleVideo = toggleVideo;
         })();
     </script>
 </body>
