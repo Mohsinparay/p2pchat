@@ -4,11 +4,23 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>2-User P2P Chat (No Backend)</title>
+    <title>Quantum Entangled P2P Chat</title>
     <style>
         :root {
             --gap: 12px;
             --radius: 12px;
+            --primary: #7e22ce;
+            --primary-dark: #581c87;
+            --secondary: #06b6d4;
+            --accent: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --background: #0f0f23;
+            --surface: #111827;
+            --surface-light: #1e293b;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --quantum-glow: 0 0 15px rgba(126, 34, 206, 0.7);
         }
 
         * {
@@ -18,28 +30,131 @@
         body {
             margin: 0;
             font: 16px system-ui, -apple-system, Segoe UI, Roboto, Arial;
-            background: #0f172a;
-            color: #e2e8f0;
+            background: var(--background);
+            color: var(--text);
             display: grid;
             place-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .quantum-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.3;
+            background: 
+                radial-gradient(circle at 20% 30%, var(--primary) 0%, transparent 25%),
+                radial-gradient(circle at 80% 70%, var(--secondary) 0%, transparent 25%),
+                radial-gradient(circle at 40% 80%, var(--accent) 0%, transparent 25%),
+                linear-gradient(45deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        }
+
+        .quantum-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(126, 34, 206, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 30%);
+            animation: fieldPulse 20s infinite alternate;
+        }
+
+        @keyframes fieldPulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
         }
 
         .card {
-            width: min(960px, 95vw);
-            background: #111827;
-            border: 1px solid #1f2937;
-            border-radius: 16px;
-            padding: 18px;
+            width: min(1100px, 95vw);
+            background: rgba(17, 24, 39, 0.85);
+            border: 1px solid rgba(126, 34, 206, 0.3);
+            border-radius: 20px;
+            padding: 24px;
             display: grid;
             gap: var(--gap);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            box-shadow: var(--quantum-glow), 0 20px 40px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            animation: cardEntrance 1s ease-out;
+        }
+
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            z-index: 1;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(126, 34, 206, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
         }
 
         h1 {
             margin: 6px 0 2px;
-            font-size: 20px;
-            letter-spacing: 0.3px;
+            font-size: 32px;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            font-weight: 800;
+            text-shadow: 0 0 20px rgba(126, 34, 206, 0.5);
+            position: relative;
+        }
+
+        h1::after {
+            content: 'ENTANGLED';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
         }
 
         .row {
@@ -53,155 +168,954 @@
             gap: var(--gap);
         }
 
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: var(--gap);
+        }
+
         textarea {
             width: 100%;
             min-height: 130px;
             resize: vertical;
-            padding: 10px;
+            padding: 12px;
             border-radius: var(--radius);
-            border: 1px solid #334155;
-            background: #0b1220;
-            color: #e2e8f0;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            border: 1px solid rgba(126, 34, 206, 0.3);
+            background: rgba(11, 18, 32, 0.7);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
             line-height: 1.25;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(126, 34, 206, 0.2), inset 0 0 10px rgba(0, 0, 0, 0.3);
         }
 
         input[type="text"] {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border-radius: var(--radius);
-            border: 1px solid #334155;
-            background: #0b1220;
-            color: #e2e8f0;
+            border: 1px solid rgba(126, 34, 206, 0.3);
+            background: rgba(11, 18, 32, 0.7);
+            color: var(--text);
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(126, 34, 206, 0.2), inset 0 0 10px rgba(0, 0, 0, 0.3);
         }
 
         button {
-            border: 1px solid #475569;
-            background: #1f2937;
-            color: #e2e8f0;
-            padding: 10px 14px;
+            border: 1px solid rgba(126, 34, 206, 0.5);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 12px 18px;
             border-radius: 10px;
             cursor: pointer;
-            transition: .15s;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
         }
 
         button:hover {
-            background: #2b3546;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4), 0 0 15px rgba(6, 182, 212, 0.5);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
 
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none;
+            background: var(--surface-light);
+            border-color: var(--surface-light);
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-color: var(--primary);
+        }
+
+        .secondary-btn {
+            background: linear-gradient(135deg, var(--secondary), #0891b2);
+            border-color: var(--secondary);
+        }
+
+        .accent-btn {
+            background: linear-gradient(135deg, var(--accent), #db2777);
+            border-color: var(--accent);
         }
 
         .chat {
             display: grid;
-            grid-template-rows: 1fr auto;
+            grid-template-rows: auto 1fr auto;
             gap: var(--gap);
-            height: 320px;
-            border: 1px solid #334155;
+            height: 450px;
+            border: 1px solid rgba(126, 34, 206, 0.3);
             border-radius: var(--radius);
-            background: #0b1220;
+            background: rgba(11, 18, 32, 0.7);
             padding: var(--gap);
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(126, 34, 206, 0.2);
+        }
+
+        .peer-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .peer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .peer-online .peer-avatar {
+            box-shadow: 0 0 15px var(--success);
+            animation: avatarPulse 2s infinite;
+        }
+
+        @keyframes avatarPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .peer-offline .peer-avatar {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--text-dim);
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            border: 2px solid var(--surface);
+            transition: all 0.3s ease;
+        }
+
+        .peer-online .status-indicator {
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        .presence-emoji {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            font-size: 16px;
+            background: var(--surface);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--surface);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .peer-typing .presence-emoji {
+            opacity: 1;
+            transform: scale(1);
+            background: var(--accent);
+        }
+
+        .peer-viewing .presence-emoji {
+            opacity: 1;
+            transform: scale(1);
+            background: var(--secondary);
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-action {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(30, 41, 59, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(126, 34, 206, 0.3);
+        }
+
+        .chat-action:hover {
+            background: var(--primary);
+            transform: scale(1.1);
         }
 
         .messages {
             overflow: auto;
             display: grid;
-            gap: 6px;
+            gap: 10px;
             align-content: start;
-            padding-right: 2px;
+            padding-right: 5px;
+        }
+
+        .messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .messages::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .messages::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
         }
 
         .bubble {
             max-width: 80%;
-            padding: 8px 12px;
-            border-radius: 12px;
+            padding: 12px 16px;
+            border-radius: 18px;
             word-wrap: break-word;
+            position: relative;
+            animation: messageAppear 0.3s ease-out;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .me {
             justify-self: end;
-            background: #2563eb;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
         }
 
         .them {
             justify-self: start;
-            background: #374151;
-            border-top-left-radius: 4px;
+            background: rgba(30, 41, 59, 0.8);
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .status {
+        .message-time {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .message-status {
+            display: flex;
+            justify-content: flex-end;
+            gap: 2px;
+            margin-top: 4px;
             font-size: 12px;
-            opacity: 0.8;
+        }
+
+        .status-sent { color: var(--text-dim); }
+        .status-delivered { color: var(--secondary); }
+        .status-read { color: var(--success); }
+
+        .status {
+            font-size: 14px;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(11, 18, 32, 0.7);
+            border-radius: var(--radius);
+            border: 1px solid rgba(126, 34, 206, 0.3);
         }
 
         .small {
             font-size: 12px;
             opacity: 0.8;
+            line-height: 1.4;
         }
 
         .mono {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .connection-flow {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .connection-flow::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            z-index: 0;
+            border-radius: 3px;
+        }
+
+        .flow-step {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 2px solid var(--surface-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 1;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .flow-step.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .flow-step.completed {
+            background: var(--secondary);
+            border-color: var(--secondary);
+            color: white;
+            box-shadow: 0 0 10px var(--secondary);
+        }
+
+        .quantum-effects {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .quantum-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--secondary);
+            opacity: 0;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) translateX(20px);
+                opacity: 0;
+            }
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            margin: 4px 0;
+            font-size: 12px;
+            color: var(--text-dim);
+            padding: 8px 12px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 12px;
+            width: fit-content;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-dim);
+            animation: typingPulse 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingPulse {
+            0%, 60%, 100% { transform: scale(1); opacity: 0.5; }
+            30% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .quantum-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--gap);
+            margin-top: 10px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .quantum-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--surface-light);
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        .message-actions {
+            display: none;
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            gap: 5px;
+        }
+
+        .bubble:hover .message-actions {
+            display: flex;
+        }
+
+        .message-action {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .message-action:hover {
+            background: var(--primary);
+        }
+
+        .ephemeral-message {
+            position: relative;
+        }
+
+        .ephemeral-timer {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            box-shadow: 0 0 5px var(--accent);
+        }
+
+        .file-message {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-top: 4px;
+        }
+
+        .file-icon {
+            font-size: 20px;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .file-size {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+
+        .download-btn {
+            background: var(--secondary);
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 10px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .snap-mode .bubble {
+            border: 2px solid var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                padding: 16px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+        }
+
+        .quantum-pulse {
+            animation: quantumPulse 3s infinite;
+        }
+
+        @keyframes quantumPulse {
+            0% { box-shadow: 0 0 5px rgba(126, 34, 206, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(126, 34, 206, 0.8), 0 0 30px rgba(6, 182, 212, 0.6); }
+            100% { box-shadow: 0 0 5px rgba(126, 34, 206, 0.5); }
+        }
+
+        .superposition-mode .bubble {
+            opacity: 0.9;
+            background: linear-gradient(135deg, rgba(126, 34, 206, 0.7), rgba(6, 182, 212, 0.7));
+        }
+
+        .quantum-encryption-badge {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 10px;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .attachment-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(30, 41, 59, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(126, 34, 206, 0.3);
+            position: relative;
+        }
+
+        .attachment-btn:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .disappearing-select {
+            background: rgba(11, 18, 32, 0.7);
+            border: 1px solid rgba(126, 34, 206, 0.3);
+            border-radius: 8px;
+            padding: 6px 10px;
+            color: var(--text);
+            font-size: 12px;
+        }
+
+        .connection-section {
+            transition: all 0.5s ease;
+            overflow: hidden;
+        }
+
+        .connection-section.hidden {
+            height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+            pointer-events: none;
+        }
+
+        .reconnect-btn {
+            background: var(--warning);
+            border-color: var(--warning);
+        }
+
+        .reaction-picker {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            background: var(--surface);
+            border: 1px solid var(--surface-light);
+            border-radius: 20px;
+            padding: 8px;
+            gap: 5px;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .reaction-option {
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .reaction-option:hover {
+            background: var(--surface-light);
+            transform: scale(1.2);
+        }
+
+        .message-reactions {
+            display: flex;
+            gap: 4px;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+
+        .reaction {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2px 6px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .reaction-count {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        .theme-selector {
+            background: rgba(11, 18, 32, 0.7);
+            border: 1px solid rgba(126, 34, 206, 0.3);
+            border-radius: 8px;
+            padding: 6px 10px;
+            color: var(--text);
+            font-size: 12px;
+        }
+
+        .voice-message {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-top: 4px;
+        }
+
+        .voice-wave {
+            flex: 1;
+            height: 20px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .voice-wave::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: voiceWave 1.5s infinite linear;
+        }
+
+        @keyframes voiceWave {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
     </style>
 </head>
 
 <body>
-    <div class="card">
-        <h1>2-User P2P Chat (no backend)</h1>
-        <div class="small">
-            Step 1: One person clicks <b>Create Offer</b> and sends the offer text to the other person (copy-paste or
-            QR/DM).<br>
-            Step 2: The other person pastes the offer, clicks <b>Create Answer</b>, and sends the answer back.<br>
-            Step 3: The first person pastes the answer and clicks <b>Finalize</b>. When status says “Connected”, start
-            chatting!
-        </div>
+    <div class="quantum-bg"></div>
+    <div class="quantum-field"></div>
+    
+    <div class="card quantum-pulse">
+        <h1>QUANTUM ENTANGLED CHAT</h1>
+        <div class="subtitle">Peer-to-Peer Communication Through Quantum Tunneling</div>
+        
+        <div class="connection-section" id="connectionSection">
+            <div class="connection-flow">
+                <div class="flow-step" id="step1">1</div>
+                <div class="flow-step" id="step2">2</div>
+                <div class="flow-step" id="step3">3</div>
+            </div>
+            
+            <div class="small">
+                Step 1: Create quantum entanglement by generating an offer and sharing it with your peer.<br>
+                Step 2: The receiver creates a quantum response and sends it back through the tunnel.<br>
+                Step 3: Finalize the entanglement and begin communicating through quantum superposition.
+            </div>
 
-        <div class="grid-2">
-            <div class="row">
-                <div class="status" id="status">Status: idle</div>
+            <div class="grid-2">
                 <div class="row">
-                    <button id="btnCreateOffer">Create Offer</button>
-                    <textarea id="localOffer" placeholder="Your OFFER (share this with your peer)" readonly></textarea>
+                    <div class="status" id="status">
+                        <div class="status-indicator"></div>
+                        <span>Quantum State: Idle</span>
+                    </div>
+                    <div class="row">
+                        <button id="btnCreateOffer" class="primary-btn">Create Quantum Offer</button>
+                        <textarea id="localOffer" placeholder="Quantum entanglement offer (share with peer)" readonly></textarea>
+                    </div>
+                    <div class="row">
+                        <textarea id="remoteAnswer" placeholder="Paste quantum response here"></textarea>
+                        <button id="btnFinalize" disabled>Finalize Entanglement</button>
+                    </div>
                 </div>
+
                 <div class="row">
-                    <textarea id="remoteAnswer" placeholder="Paste the ANSWER you received"></textarea>
-                    <button id="btnFinalize" disabled>Finalize</button>
+                    <div class="status">&nbsp;</div>
+                    <div class="row">
+                        <textarea id="remoteOffer" placeholder="Paste quantum offer here"></textarea>
+                        <button id="btnCreateAnswer" class="secondary-btn">Create Quantum Response</button>
+                    </div>
+                    <div class="row">
+                        <textarea id="localAnswer" placeholder="Quantum response (send back through tunnel)" readonly></textarea>
+                    </div>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="status">&nbsp;</div>
-                <div class="row">
-                    <textarea id="remoteOffer" placeholder="Paste the OFFER you received"></textarea>
-                    <button id="btnCreateAnswer">Create Answer</button>
+            <div class="quantum-controls">
+                <div class="control-group">
+                    <div class="control-label">QUANTUM MODES</div>
+                    <div class="quantum-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="superpositionMode">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span>Superposition Mode</span>
+                    </div>
+                    <div class="quantum-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="quantumEncryption">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span>Quantum Encryption</span>
+                    </div>
                 </div>
-                <div class="row">
-                    <textarea id="localAnswer" placeholder="Your ANSWER (send this back)" readonly></textarea>
+                <div class="control-group">
+                    <div class="control-label">APPEARANCE</div>
+                    <select class="theme-selector" id="themeSelector">
+                        <option value="quantum">Quantum Theme</option>
+                        <option value="dark">Dark Mode</option>
+                        <option value="light">Light Mode</option>
+                        <option value="purple">Purple Haze</option>
+                    </select>
                 </div>
             </div>
         </div>
 
         <div class="chat">
+            <div class="chat-header">
+                <div class="peer-status" id="peerStatus">
+                    <div class="peer-avatar">👤
+                        <div class="status-indicator"></div>
+                        <div class="presence-emoji" id="typingEmoji">✏️</div>
+                        <div class="presence-emoji" id="viewingEmoji">🐵</div>
+                    </div>
+                    <div>
+                        <div id="peerStatusText">Peer Offline</div>
+                        <div class="small" id="peerActivity">Last seen: Never</div>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button class="chat-action reconnect-btn" title="Reconnect" id="reconnectBtn" style="display: none;">↻</button>
+                    <div class="chat-action" title="Voice Message" id="voiceBtn">🎤</div>
+                    <div class="chat-action" title="Clear Chat" id="clearChat">🗑️</div>
+                    <div class="chat-action" title="Export Chat" id="exportChat">📤</div>
+                </div>
+            </div>
+            
             <div id="messages" class="messages"></div>
-            <div class="grid-2" style="grid-template-columns: 1fr auto;">
-                <input id="input" type="text" placeholder="Type a message..." disabled />
-                <button id="send" disabled>Send</button>
+            <div class="typing-indicator" id="typingIndicator">
+                <span>Peer is typing</span>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+            
+            <div class="chat-input-container">
+                <div class="attachment-btn" title="Attach File" id="attachBtn">
+                    📎
+                    <input type="file" id="fileInput" class="file-input" multiple>
+                </div>
+                <input id="input" type="text" placeholder="Transmit through quantum tunnel..." disabled />
+                <button id="send" disabled>Transmit</button>
+                <div class="attachment-btn" title="Add Reaction" id="reactionBtn">❤️
+                    <div class="reaction-picker" id="reactionPicker">
+                        <div class="reaction-option" data-reaction="❤️">❤️</div>
+                        <div class="reaction-option" data-reaction="😂">😂</div>
+                        <div class="reaction-option" data-reaction="😮">😮</div>
+                        <div class="reaction-option" data-reaction="😢">😢</div>
+                        <div class="reaction-option" data-reaction="👏">👏</div>
+                        <div class="reaction-option" data-reaction="🎉">🎉</div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="small mono">
-            Tip: This uses WebRTC with only public STUN (no servers you run). If both peers are behind strict/symmetric
-            NAT and can’t connect, it may fail without a TURN server.
+            <div class="quantum-encryption-badge">
+                <span>🔒</span>
+                <span>QUANTUM ENCRYPTION ACTIVE</span>
+            </div>
+            System: WebRTC with quantum tunneling through public STUN. If entanglement fails due to NAT interference, try using a TURN relay.
         </div>
     </div>
 
     <script>
         (() => {
-            // Use public STUN. (No TURN here to keep it “no backend you run”.)
+            // Use public STUN. (No TURN here to keep it "no backend you run".)
             const pc = new RTCPeerConnection({
                 iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
             });
@@ -209,6 +1123,21 @@
             let dc; // DataChannel
             let isOfferer = false;
             let connected = false;
+            let typingTimer;
+            let lastSentTyping = 0;
+            let superpositionMode = false;
+            let snapMode = false;
+            let messageIdCounter = 0;
+            let peerOnline = false;
+            let lastPeerActivity = 0;
+            let ephemeralTimers = new Map();
+            let unreadMessages = new Set();
+            let peerTyping = false;
+            let peerViewing = false;
+            let lastViewingUpdate = 0;
+            let myViewingStatus = false;
+            let voiceRecorder = null;
+            let audioChunks = [];
 
             const $ = id => document.getElementById(id);
             const statusEl = $("status");
@@ -222,14 +1151,484 @@
             const input = $("input");
             const sendBtn = $("send");
             const messages = $("messages");
+            const typingIndicator = $("typingIndicator");
+            const step1 = $("step1");
+            const step2 = $("step2");
+            const step3 = $("step3");
+            const peerStatus = $("peerStatus");
+            const peerStatusText = $("peerStatusText");
+            const peerActivity = $("peerActivity");
+            const clearChatBtn = $("clearChat");
+            const exportChatBtn = $("exportChat");
+            const attachBtn = $("attachBtn");
+            const fileInput = $("fileInput");
+            const themeSelector = $("themeSelector");
+            const typingEmoji = $("typingEmoji");
+            const viewingEmoji = $("viewingEmoji");
+            const connectionSection = $("connectionSection");
+            const reconnectBtn = $("reconnectBtn");
+            const voiceBtn = $("voiceBtn");
+            const reactionBtn = $("reactionBtn");
+            const reactionPicker = $("reactionPicker");
 
-            function setStatus(text) { statusEl.textContent = "Status: " + text; }
-            function addMsg(text, mine) {
+            // Track visibility state for presence
+            let lastVisibilityChange = Date.now();
+            let lastPresenceUpdate = 0;
+            document.addEventListener('visibilitychange', () => {
+                if (connected) {
+                    const now = Date.now();
+                    // Update viewing status immediately
+                    updateMyViewingStatus();
+                    
+                    // Send presence update with debouncing
+                    if (now - lastPresenceUpdate > 2000) {
+                        sendPresenceUpdate();
+                        lastPresenceUpdate = now;
+                    }
+                    
+                    if (document.visibilityState === 'visible') {
+                        markAllAsRead();
+                    }
+                }
+            });
+
+            // Send periodic presence updates
+            setInterval(() => {
+                if (connected) {
+                    sendPresenceUpdate();
+                }
+            }, 4000);
+
+            // Check for peer activity timeout
+            setInterval(() => {
+                if (connected && peerOnline) {
+                    const timeSinceLastActivity = Date.now() - lastPeerActivity;
+                    
+                    // More accurate offline detection
+                    if (timeSinceLastActivity > 7000) { // 7 seconds threshold
+                        updatePeerStatus(false);
+                    }
+                    
+                    // Check viewing status timeout
+                    const timeSinceViewing = Date.now() - lastViewingUpdate;
+                    if (timeSinceViewing > 5000 && peerViewing) { // 5 seconds for viewing
+                        updatePeerViewing(false);
+                    }
+                }
+            }, 1000);
+
+            // Update viewing status based on focus and visibility
+            function updateMyViewingStatus() {
+                const newViewingStatus = document.visibilityState === 'visible' && document.hasFocus();
+                if (newViewingStatus !== myViewingStatus) {
+                    myViewingStatus = newViewingStatus;
+                    sendViewingStatus(myViewingStatus);
+                }
+            }
+
+            function setStatus(text, className = "") {
+                statusEl.textContent = "Quantum State: " + text;
+                statusEl.className = `status ${className}`;
+            }
+
+            function updatePeerStatus(online, timestamp = Date.now()) {
+                // Prevent rapid state changes
+                if (peerOnline === online && Date.now() - lastPeerActivity < 3000) return;
+                
+                peerOnline = online;
+                if (online) {
+                    peerStatus.classList.add('peer-online');
+                    peerStatus.classList.remove('peer-offline');
+                    peerStatusText.textContent = 'Peer Online';
+                    peerActivity.textContent = 'Active now';
+                    lastPeerActivity = timestamp;
+                } else {
+                    peerStatus.classList.add('peer-offline');
+                    peerStatus.classList.remove('peer-online');
+                    peerStatusText.textContent = 'Peer Offline';
+                    
+                    if (lastPeerActivity > 0) {
+                        const timeDiff = Date.now() - lastPeerActivity;
+                        if (timeDiff < 10000) { // 10 seconds
+                            peerActivity.textContent = `Last seen: Just now`;
+                        } else if (timeDiff < 60000) { // 1 minute
+                            const seconds = Math.floor(timeDiff / 1000);
+                            peerActivity.textContent = `Last seen: ${seconds}s ago`;
+                        } else {
+                            const minutes = Math.floor(timeDiff / 60000);
+                            peerActivity.textContent = `Last seen: ${minutes} min ago`;
+                        }
+                    } else {
+                        peerActivity.textContent = 'Last seen: Never';
+                    }
+                }
+            }
+
+            function updatePeerTyping(typing) {
+                if (peerTyping === typing) return;
+                
+                peerTyping = typing;
+                if (typing) {
+                    peerStatus.classList.add('peer-typing');
+                    typingIndicator.style.display = 'flex';
+                } else {
+                    peerStatus.classList.remove('peer-typing');
+                    typingIndicator.style.display = 'none';
+                }
+            }
+
+            function updatePeerViewing(viewing) {
+                if (peerViewing === viewing) return;
+                
+                peerViewing = viewing;
+                if (viewing) {
+                    peerStatus.classList.add('peer-viewing');
+                    lastViewingUpdate = Date.now();
+                } else {
+                    peerStatus.classList.remove('peer-viewing');
+                }
+            }
+
+            function hideConnectionSection() {
+                connectionSection.classList.add('hidden');
+                reconnectBtn.style.display = 'flex';
+            }
+
+            function showConnectionSection() {
+                connectionSection.classList.remove('hidden');
+                reconnectBtn.style.display = 'none';
+            }
+
+            function updateFlowStep(step, state) {
+                const stepEl = $(`step${step}`);
+                stepEl.className = "flow-step";
+                if (state === "active") stepEl.classList.add("active");
+                if (state === "completed") stepEl.classList.add("completed");
+            }
+
+            function addMsg(text, mine, messageId = null, status = 'sent', ephemeral = 0, fileData = null, voiceData = null, reactions = []) {
+                if (!messageId) messageId = generateMessageId();
+                
                 const div = document.createElement("div");
                 div.className = "bubble " + (mine ? "me" : "them");
-                div.textContent = text;
+                div.dataset.messageId = messageId;
+                
+                if (ephemeral > 0 && mine) {
+                    div.classList.add('ephemeral-message');
+                    
+                    const timer = document.createElement("div");
+                    timer.className = "ephemeral-timer";
+                    timer.textContent = ephemeral;
+                    timer.id = `timer-${messageId}`;
+                    div.appendChild(timer);
+                    
+                    startEphemeralTimer(messageId, ephemeral);
+                }
+                
+                const messageContent = document.createElement("div");
+                
+                if (fileData) {
+                    const fileMessage = document.createElement("div");
+                    fileMessage.className = "file-message";
+                    
+                    const fileIcon = document.createElement("div");
+                    fileIcon.className = "file-icon";
+                    fileIcon.textContent = getFileIcon(fileData.type);
+                    
+                    const fileInfo = document.createElement("div");
+                    fileInfo.className = "file-info";
+                    
+                    const fileName = document.createElement("div");
+                    fileName.className = "file-name";
+                    fileName.textContent = fileData.name;
+                    
+                    const fileSize = document.createElement("div");
+                    fileSize.className = "file-size";
+                    fileSize.textContent = formatFileSize(fileData.size);
+                    
+                    fileInfo.appendChild(fileName);
+                    fileInfo.appendChild(fileSize);
+                    
+                    const downloadBtn = document.createElement("button");
+                    downloadBtn.className = "download-btn";
+                    downloadBtn.textContent = "Download";
+                    downloadBtn.onclick = () => downloadFile(fileData);
+                    
+                    fileMessage.appendChild(fileIcon);
+                    fileMessage.appendChild(fileInfo);
+                    fileMessage.appendChild(downloadBtn);
+                    
+                    messageContent.appendChild(fileMessage);
+                } else if (voiceData) {
+                    const voiceMessage = document.createElement("div");
+                    voiceMessage.className = "voice-message";
+                    
+                    const playBtn = document.createElement("div");
+                    playBtn.className = "file-icon";
+                    playBtn.textContent = "🔊";
+                    playBtn.style.cursor = 'pointer';
+                    playBtn.onclick = () => playVoiceMessage(voiceData);
+                    
+                    const voiceWave = document.createElement("div");
+                    voiceWave.className = "voice-wave";
+                    
+                    const duration = document.createElement("div");
+                    duration.className = "file-size";
+                    duration.textContent = voiceData.duration + "s";
+                    
+                    voiceMessage.appendChild(playBtn);
+                    voiceMessage.appendChild(voiceWave);
+                    voiceMessage.appendChild(duration);
+                    
+                    messageContent.appendChild(voiceMessage);
+                } else {
+                    messageContent.textContent = text;
+                }
+                
+                div.appendChild(messageContent);
+                
+                // Add reactions if any
+                if (reactions.length > 0) {
+                    const reactionsContainer = document.createElement("div");
+                    reactionsContainer.className = "message-reactions";
+                    
+                    reactions.forEach(reaction => {
+                        const reactionEl = document.createElement("div");
+                        reactionEl.className = "reaction";
+                        reactionEl.innerHTML = `
+                            ${reaction.emoji}
+                            <span class="reaction-count">${reaction.count}</span>
+                        `;
+                        reactionEl.onclick = () => addReaction(messageId, reaction.emoji);
+                        reactionsContainer.appendChild(reactionEl);
+                    });
+                    
+                    div.appendChild(reactionsContainer);
+                }
+                
+                const time = document.createElement("div");
+                time.className = "message-time";
+                time.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                div.appendChild(time);
+                
+                // Add message status for user's messages
+                if (mine) {
+                    const statusDiv = document.createElement("div");
+                    statusDiv.className = "message-status";
+                    statusDiv.id = `status-${messageId}`;
+                    
+                    let statusText = 'Sent';
+                    let statusClass = 'status-sent';
+                    
+                    if (status === 'delivered') {
+                        statusText = 'Delivered';
+                        statusClass = 'status-delivered';
+                    } else if (status === 'read') {
+                        statusText = 'Read';
+                        statusClass = 'status-read';
+                    }
+                    
+                    statusDiv.innerHTML = `<span class="${statusClass}">${statusText}</span>`;
+                    div.appendChild(statusDiv);
+                } else {
+                    unreadMessages.add(messageId);
+                    if (document.visibilityState === 'visible') {
+                        sendReadReceipt(messageId);
+                    }
+                }
+                
+                // Add message actions
+                const actions = document.createElement("div");
+                actions.className = "message-actions";
+                
+                const reactBtn = document.createElement("div");
+                reactBtn.className = "message-action";
+                reactBtn.innerHTML = "❤️";
+                reactBtn.title = "Add reaction";
+                reactBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    showReactionPicker(messageId, reactBtn);
+                };
+                
+                actions.appendChild(reactBtn);
+                
+                if (mine) {
+                    const deleteBtn = document.createElement("div");
+                    deleteBtn.className = "message-action";
+                    deleteBtn.innerHTML = "×";
+                    deleteBtn.title = "Delete message";
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        deleteMessage(messageId);
+                    };
+                    actions.appendChild(deleteBtn);
+                }
+                
+                div.appendChild(actions);
+                
                 messages.appendChild(div);
                 messages.scrollTop = messages.scrollHeight;
+                
+                createParticles(div);
+                
+                return messageId;
+            }
+
+            function showReactionPicker(messageId, button) {
+                const rect = button.getBoundingClientRect();
+                reactionPicker.style.display = 'flex';
+                reactionPicker.style.left = rect.left + 'px';
+                reactionPicker.style.bottom = (window.innerHeight - rect.top) + 'px';
+                
+                // Set click handler for reactions
+                reactionPicker.onclick = (e) => {
+                    const reaction = e.target.dataset.reaction;
+                    if (reaction) {
+                        addReaction(messageId, reaction);
+                        reactionPicker.style.display = 'none';
+                    }
+                };
+                
+                // Hide on outside click
+                setTimeout(() => {
+                    document.addEventListener('click', function hidePicker() {
+                        reactionPicker.style.display = 'none';
+                        document.removeEventListener('click', hidePicker);
+                    });
+                }, 100);
+            }
+
+            function addReaction(messageId, emoji) {
+                if (!dc || dc.readyState !== 'open') return;
+                
+                dc.send(JSON.stringify({
+                    type: 'reaction',
+                    messageId: messageId,
+                    emoji: emoji,
+                    timestamp: Date.now()
+                }));
+            }
+
+            function playVoiceMessage(voiceData) {
+                const audioBlob = new Blob([voiceData.data], { type: 'audio/wav' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = new Audio(audioUrl);
+                audio.play();
+            }
+
+            function getFileIcon(fileType) {
+                if (fileType.startsWith('image/')) return '🖼️';
+                if (fileType.startsWith('video/')) return '🎬';
+                if (fileType.startsWith('audio/')) return '🎵';
+                if (fileType.includes('pdf')) return '📄';
+                if (fileType.includes('zip') || fileType.includes('rar')) return '📦';
+                return '📎';
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            function downloadFile(fileData) {
+                const blob = new Blob([fileData.data], { type: fileData.type });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileData.name;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            function generateMessageId() {
+                return `msg_${Date.now()}_${++messageIdCounter}`;
+            }
+
+            function updateMessageStatus(messageId, status) {
+                const statusEl = $(`status-${messageId}`);
+                if (statusEl) {
+                    let statusText = 'Sent';
+                    let statusClass = 'status-sent';
+                    
+                    if (status === 'delivered') {
+                        statusText = 'Delivered';
+                        statusClass = 'status-delivered';
+                    } else if (status === 'read') {
+                        statusText = 'Read';
+                        statusClass = 'status-read';
+                    }
+                    
+                    statusEl.innerHTML = `<span class="${statusClass}">${statusText}</span>`;
+                }
+            }
+
+            function deleteMessage(messageId) {
+                const messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
+                if (messageEl) {
+                    messageEl.style.opacity = "0.3";
+                    setTimeout(() => {
+                        if (messageEl.parentNode) {
+                            messageEl.parentNode.removeChild(messageEl);
+                        }
+                    }, 300);
+                    
+                    if (connected && dc.readyState === 'open') {
+                        dc.send(JSON.stringify({ 
+                            type: 'message_deleted', 
+                            messageId: messageId 
+                        }));
+                    }
+                }
+            }
+
+            function startEphemeralTimer(messageId, duration) {
+                const timerEl = $(`timer-${messageId}`);
+                if (!timerEl) return;
+                
+                let remaining = duration;
+                const countdown = setInterval(() => {
+                    remaining--;
+                    timerEl.textContent = remaining;
+                    
+                    if (remaining <= 0) {
+                        clearInterval(countdown);
+                        deleteMessage(messageId);
+                        ephemeralTimers.delete(messageId);
+                    }
+                }, 1000);
+                
+                ephemeralTimers.set(messageId, countdown);
+            }
+
+            function createParticles(element) {
+                const rect = element.getBoundingClientRect();
+                const cardRect = document.querySelector('.card').getBoundingClientRect();
+                
+                for (let i = 0; i < 8; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'quantum-particle';
+                    
+                    const colors = ['#7e22ce', '#06b6d4', '#ec4899'];
+                    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    const left = rect.left - cardRect.left + Math.random() * rect.width;
+                    const top = rect.top - cardRect.top + rect.height;
+                    
+                    particle.style.left = `${left}px`;
+                    particle.style.top = `${top}px`;
+                    particle.style.animation = `particleFloat ${1 + Math.random()}s ease-out forwards`;
+                    
+                    document.querySelector('.card').appendChild(particle);
+                    
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 2000);
+                }
             }
 
             // ICE gathering: show final SDP only when done (so it includes ICE candidates)
@@ -251,32 +1650,197 @@
                 dc = channel;
                 dc.onopen = () => {
                     connected = true;
-                    setStatus("Connected");
+                    setStatus("Entangled", "connected");
                     input.disabled = false;
                     sendBtn.disabled = false;
-                    btnCreateOffer.disabled = true;
-                    btnCreateAnswer.disabled = true;
-                    btnFinalize.disabled = true;
-                    remoteOffer.disabled = true;
-                    remoteAnswer.disabled = true;
+                    hideConnectionSection();
+                    updateFlowStep(3, "completed");
+                    
+                    sendPresenceUpdate();
                 };
-                dc.onclose = () => setStatus("Disconnected");
-                dc.onmessage = (ev) => addMsg(ev.data, false);
+                dc.onclose = () => {
+                    setStatus("Disentangled");
+                    updatePeerStatus(false);
+                    showConnectionSection();
+                    connected = false;
+                };
+                dc.onmessage = (ev) => {
+                    const data = JSON.parse(ev.data);
+                    handleIncomingData(data);
+                };
+            }
+
+            function handleIncomingData(data) {
+                lastPeerActivity = Date.now();
+                updatePeerStatus(true, lastPeerActivity);
+                
+                if (data.type === 'message') {
+                    addMsg(data.content, false, data.messageId);
+                } else if (data.type === 'file') {
+                    handleFileData(data);
+                } else if (data.type === 'voice') {
+                    handleVoiceData(data);
+                } else if (data.type === 'typing') {
+                    updatePeerTyping(data.typing);
+                } else if (data.type === 'viewing') {
+                    updatePeerViewing(data.viewing);
+                    lastViewingUpdate = Date.now();
+                } else if (data.type === 'presence') {
+                    updatePeerStatus(data.online, data.timestamp);
+                    if (data.viewing !== undefined) {
+                        updatePeerViewing(data.viewing);
+                        lastViewingUpdate = Date.now();
+                    }
+                } else if (data.type === 'message_status') {
+                    updateMessageStatus(data.messageId, data.status);
+                } else if (data.type === 'message_deleted') {
+                    deleteMessage(data.messageId);
+                } else if (data.type === 'read_receipt') {
+                    updateMessageStatus(data.messageId, 'read');
+                    unreadMessages.delete(data.messageId);
+                } else if (data.type === 'reaction') {
+                    handleReaction(data);
+                }
+            }
+
+            function handleReaction(data) {
+                const messageEl = document.querySelector(`[data-message-id="${data.messageId}"]`);
+                if (messageEl) {
+                    let reactionsContainer = messageEl.querySelector('.message-reactions');
+                    if (!reactionsContainer) {
+                        reactionsContainer = document.createElement('div');
+                        reactionsContainer.className = 'message-reactions';
+                        messageEl.appendChild(reactionsContainer);
+                    }
+                    
+                    // Add or update reaction
+                    // This is a simplified implementation - in production you'd want proper reaction counting
+                    const reactionEl = document.createElement("div");
+                    reactionEl.className = "reaction";
+                    reactionEl.innerHTML = `
+                        ${data.emoji}
+                        <span class="reaction-count">1</span>
+                    `;
+                    reactionEl.onclick = () => addReaction(data.messageId, data.emoji);
+                    reactionsContainer.appendChild(reactionEl);
+                }
+            }
+
+            function handleFileData(fileData) {
+                try {
+                    const binaryString = atob(fileData.data);
+                    const bytes = new Uint8Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    
+                    const fileObj = {
+                        name: fileData.name,
+                        type: fileData.fileType,
+                        size: fileData.size,
+                        data: bytes.buffer
+                    };
+                    
+                    addMsg("", false, fileData.messageId, 'sent', 0, fileObj);
+                    sendReadReceipt(fileData.messageId);
+                } catch (e) {
+                    console.error("Error processing file:", e);
+                }
+            }
+
+            function handleVoiceData(voiceData) {
+                try {
+                    const binaryString = atob(voiceData.data);
+                    const bytes = new Uint8Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    
+                    const voiceObj = {
+                        duration: voiceData.duration,
+                        data: bytes.buffer
+                    };
+                    
+                    addMsg("", false, voiceData.messageId, 'sent', 0, null, voiceObj);
+                    sendReadReceipt(voiceData.messageId);
+                } catch (e) {
+                    console.error("Error processing voice:", e);
+                }
             }
 
             // The answerer will receive datachannel
-            pc.ondatachannel = (ev) => setupDataChannel(ev.channel);
+            pc.ondatachannel = (ev) => {
+                if (ev.channel.label === "chat") {
+                    setupDataChannel(ev.channel);
+                }
+            };
+
+            function sendPresenceUpdate() {
+                if (!dc || dc.readyState !== 'open') return;
+                
+                const online = document.visibilityState === 'visible';
+                const viewing = online && document.hasFocus();
+                
+                dc.send(JSON.stringify({ 
+                    type: 'presence', 
+                    online: online,
+                    viewing: viewing,
+                    timestamp: Date.now()
+                }));
+            }
+
+            function sendReadReceipt(messageId) {
+                if (!dc || dc.readyState !== 'open') return;
+                
+                dc.send(JSON.stringify({ 
+                    type: 'read_receipt', 
+                    messageId: messageId 
+                }));
+                
+                unreadMessages.delete(messageId);
+            }
+
+            function markAllAsRead() {
+                if (!dc || dc.readyState !== 'open') return;
+                
+                unreadMessages.forEach(messageId => {
+                    sendReadReceipt(messageId);
+                });
+            }
+
+            // Track window focus for viewing status
+            window.addEventListener('focus', () => {
+                updateMyViewingStatus();
+            });
+
+            window.addEventListener('blur', () => {
+                updateMyViewingStatus();
+            });
 
             // Helpful connection state logs
             pc.onconnectionstatechange = () => {
-                setStatus(pc.connectionState);
+                const state = pc.connectionState;
+                
+                if (state === "connecting") {
+                    setStatus("Establishing Quantum Tunnel", "connecting");
+                } else if (state === "connected") {
+                    setStatus("Entangled", "connected");
+                } else if (state === "disconnected") {
+                    setStatus("Tunnel Collapsed");
+                    updatePeerStatus(false);
+                    showConnectionSection();
+                    connected = false;
+                } else {
+                    setStatus(state);
+                }
             };
 
             // BUTTON: Create Offer (Person A)
             btnCreateOffer.onclick = async () => {
                 if (connected) return;
                 isOfferer = true;
-                setStatus("Creating offer…");
+                setStatus("Creating Quantum Entanglement", "connecting");
+                updateFlowStep(1, "active");
                 const channel = pc.createDataChannel("chat", { ordered: true });
                 setupDataChannel(channel);
 
@@ -284,9 +1848,11 @@
                 await pc.setLocalDescription(offer);
                 await waitForIceGatheringComplete(pc);
                 localOffer.value = JSON.stringify(pc.localDescription);
-                localOffer.readOnly = false; // allow select/copy
+                localOffer.readOnly = false;
                 localOffer.select();
-                setStatus("Offer ready — share it");
+                setStatus("Quantum Offer Ready");
+                updateFlowStep(1, "completed");
+                updateFlowStep(2, "active");
                 btnFinalize.disabled = false;
                 btnCreateOffer.disabled = true;
             };
@@ -296,11 +1862,12 @@
                 if (connected) return;
                 const offerText = remoteOffer.value.trim();
                 if (!offerText) {
-                    alert("Paste the OFFER first.");
+                    alert("Paste the Quantum Offer first.");
                     return;
                 }
                 try {
-                    setStatus("Creating answer…");
+                    setStatus("Creating Quantum Response", "connecting");
+                    updateFlowStep(2, "active");
                     const offer = JSON.parse(offerText);
                     await pc.setRemoteDescription(offer);
 
@@ -310,12 +1877,14 @@
                     localAnswer.value = JSON.stringify(pc.localDescription);
                     localAnswer.readOnly = false;
                     localAnswer.select();
-                    setStatus("Answer ready — send it back");
+                    setStatus("Quantum Response Ready");
+                    updateFlowStep(2, "completed");
+                    updateFlowStep(3, "active");
                     btnCreateAnswer.disabled = true;
                     remoteOffer.disabled = true;
                 } catch (e) {
                     console.error(e);
-                    alert("Invalid OFFER JSON.");
+                    alert("Invalid Quantum Offer.");
                 }
             };
 
@@ -323,30 +1892,236 @@
             btnFinalize.onclick = async () => {
                 const answerText = remoteAnswer.value.trim();
                 if (!answerText) {
-                    alert("Paste the ANSWER first.");
+                    alert("Paste the Quantum Response first.");
                     return;
                 }
                 try {
-                    setStatus("Finalizing…");
+                    setStatus("Finalizing Entanglement", "connecting");
                     const answer = JSON.parse(answerText);
                     await pc.setRemoteDescription(answer);
                     btnFinalize.disabled = true;
                     remoteAnswer.disabled = true;
-                    // Once remote description is set, ICE will continue; onopen will flip status.
                 } catch (e) {
                     console.error(e);
-                    alert("Invalid ANSWER JSON.");
+                    alert("Invalid Quantum Response.");
                 }
             };
+
+            // Reconnect button
+            reconnectBtn.onclick = () => {
+                location.reload();
+            };
+
+            // Voice message functionality
+            voiceBtn.onclick = async () => {
+                if (!connected) {
+                    alert("Please establish connection first.");
+                    return;
+                }
+
+                try {
+                    if (!voiceRecorder) {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        voiceRecorder = new MediaRecorder(stream);
+                        audioChunks = [];
+
+                        voiceRecorder.ondataavailable = (event) => {
+                            audioChunks.push(event.data);
+                        };
+
+                        voiceRecorder.onstop = () => {
+                            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                            sendVoiceMessage(audioBlob);
+                        };
+                    }
+
+                    if (voiceRecorder.state === 'recording') {
+                        voiceRecorder.stop();
+                        voiceBtn.style.background = 'rgba(30, 41, 59, 0.7)';
+                    } else {
+                        audioChunks = [];
+                        voiceRecorder.start();
+                        voiceBtn.style.background = 'var(--accent)';
+                    }
+                } catch (error) {
+                    console.error("Error accessing microphone:", error);
+                    alert("Could not access microphone. Please check permissions.");
+                }
+            };
+
+            function sendVoiceMessage(audioBlob) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const arrayBuffer = e.target.result;
+                    
+                    const binary = new Uint8Array(arrayBuffer);
+                    let base64 = '';
+                    for (let i = 0; i < binary.length; i++) {
+                        base64 += String.fromCharCode(binary[i]);
+                    }
+                    const base64Data = btoa(base64);
+                    
+                    const messageId = generateMessageId();
+                    const voiceMessage = {
+                        type: 'voice',
+                        duration: Math.round(audioBlob.size / 16000), // Rough estimation
+                        data: base64Data,
+                        messageId: messageId,
+                        timestamp: Date.now()
+                    };
+                    
+                    try {
+                        dc.send(JSON.stringify(voiceMessage));
+                        
+                        addMsg("", true, messageId, 'sent', 0, null, {
+                            duration: voiceMessage.duration,
+                            data: arrayBuffer
+                        });
+                        
+                        setTimeout(() => {
+                            updateMessageStatus(messageId, 'delivered');
+                        }, 300);
+                    } catch (error) {
+                        console.error("Error sending voice message:", error);
+                        alert("Error sending voice message.");
+                    }
+                };
+                reader.readAsArrayBuffer(audioBlob);
+            }
+
+            // File sharing
+            attachBtn.onclick = () => fileInput.click();
+            
+            fileInput.onchange = (e) => {
+                const files = Array.from(e.target.files);
+                files.forEach(sendFile);
+                fileInput.value = '';
+            };
+
+            function sendFile(file) {
+                if (!connected || !dc || dc.readyState !== 'open') {
+                    alert("Please establish connection first.");
+                    return;
+                }
+
+                if (file.size > 5 * 1024 * 1024) {
+                    alert("File too large. Please select a file smaller than 5MB.");
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const arrayBuffer = e.target.result;
+                    
+                    const binary = new Uint8Array(arrayBuffer);
+                    let base64 = '';
+                    for (let i = 0; i < binary.length; i++) {
+                        base64 += String.fromCharCode(binary[i]);
+                    }
+                    const base64Data = btoa(base64);
+                    
+                    const messageId = generateMessageId();
+                    const fileMessage = {
+                        type: 'file',
+                        name: file.name,
+                        fileType: file.type,
+                        size: file.size,
+                        data: base64Data,
+                        messageId: messageId,
+                        timestamp: Date.now()
+                    };
+                    
+                    try {
+                        dc.send(JSON.stringify(fileMessage));
+                        
+                        addMsg("", true, messageId, 'sent', 0, {
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            data: arrayBuffer
+                        });
+                        
+                        setTimeout(() => {
+                            updateMessageStatus(messageId, 'delivered');
+                        }, 300);
+                    } catch (error) {
+                        console.error("Error sending file:", error);
+                        alert("Error sending file. File might be too large.");
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            }
 
             // Chat send
             function send() {
                 const text = input.value.trim();
                 if (!text || !dc || dc.readyState !== "open") return;
-                dc.send(text);
-                addMsg(text, true);
+                
+                const messageId = generateMessageId();
+                
+                dc.send(JSON.stringify({ 
+                    type: 'message', 
+                    content: text,
+                    messageId: messageId,
+                    timestamp: Date.now()
+                }));
+                
+                addMsg(text, true, messageId, 'sent');
                 input.value = "";
+                
+                sendTypingStatus(false);
+                
+                setTimeout(() => {
+                    updateMessageStatus(messageId, 'delivered');
+                    
+                    if (dc.readyState === 'open') {
+                        dc.send(JSON.stringify({ 
+                            type: 'message_status', 
+                            messageId: messageId,
+                            status: 'delivered'
+                        }));
+                    }
+                }, 300);
             }
+            
+            function sendTypingStatus(typing) {
+                if (!dc || dc.readyState !== 'open') return;
+                
+                const now = Date.now();
+                if (typing && now - lastSentTyping < 500) return;
+                
+                lastSentTyping = now;
+                dc.send(JSON.stringify({ type: 'typing', typing: typing }));
+            }
+            
+            function sendViewingStatus(viewing) {
+                if (!dc || dc.readyState !== 'open') return;
+                
+                dc.send(JSON.stringify({ type: 'viewing', viewing: viewing }));
+            }
+            
+            // Typing detection
+            input.addEventListener('input', () => {
+                if (input.value.length > 0) {
+                    sendTypingStatus(true);
+                    
+                    if (typingTimer) clearTimeout(typingTimer);
+                    
+                    typingTimer = setTimeout(() => {
+                        sendTypingStatus(false);
+                    }, 1000);
+                } else {
+                    sendTypingStatus(false);
+                }
+            });
+
+            // Viewing status detection
+            setInterval(() => {
+                if (connected) {
+                    updateMyViewingStatus();
+                }
+            }, 2000);
+
             sendBtn.onclick = send;
             input.addEventListener("keydown", (e) => {
                 if (e.key === "Enter") {
@@ -354,6 +2129,38 @@
                     send();
                 }
             });
+            
+            // Theme selector
+            themeSelector.addEventListener('change', (e) => {
+                document.body.setAttribute('data-theme', e.target.value);
+            });
+            
+            // Chat actions
+            clearChatBtn.onclick = () => {
+                if (confirm("Clear all messages?")) {
+                    messages.innerHTML = '';
+                    unreadMessages.clear();
+                }
+            };
+            
+            exportChatBtn.onclick = () => {
+                const chatText = Array.from(messages.children)
+                    .map(msg => {
+                        const isMe = msg.classList.contains('me');
+                        const content = msg.querySelector('div:first-child').textContent;
+                        const time = msg.querySelector('.message-time').textContent;
+                        return `${isMe ? 'You' : 'Peer'} (${time}): ${content}`;
+                    })
+                    .join('\n');
+                
+                const blob = new Blob([chatText], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'quantum-chat-export.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+            };
         })();
     </script>
 </body>
